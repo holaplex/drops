@@ -1,0 +1,36 @@
+{
+  "name": "Holaplex Test Drop - 7",
+  "symbol": "HTD",
+  "description": "Simple but satisfying NFT to test Holaplex Drops. Let the drops run free.",
+  "seller_fee_basis_points": 200,
+  "attributes": [
+    {
+      "display_type":"string",
+      "trait_type": "color",
+      "value": "purple"
+    },
+    {
+      "display_type":"string",
+      "trait_type": "shape",
+      "value": "square"
+   }
+  ],
+  "collection": {
+     "name": "Hoplex Drop Test - This is only a test",
+     "family": "Holaplex" 
+  },
+  "properties": {
+    "files": [{"uri":"image.png","type":"image/png"}],
+    "category": "image",
+    "creators": [
+      {
+        "address": "68mSAEgwwSYpjq3hrCSpHT4jzNW1fBSonktx33vgyp9m",
+        "share": 97
+      },
+      {
+        "address": "7riiuVB2JqFfKNZfqMgMmrR8cW6WWwtznUd7qLQARtEe",
+        "share": 3
+      } 
+    ]
+  }
+}
