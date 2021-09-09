@@ -232,16 +232,16 @@ const Drop = (props: DropProps) => {
                 <List
                   grid={{ xs: 1, sm: 2, md: 4, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
                   dataSource={nfts}
-                  renderItem={(nft: any, index: number) => (
-                    <List.Item key={index}>
+                  renderItem={(nft: any, index: number) => {
+                    return (<List.Item key={index}>
                       {/*@ts-ignore*/}
                       <Card
-                        cover={<img alt="example" src={view(lensPath(['files', 0, 'uri']))(nft)} />}
+                        cover={<img alt="example" src={nft.image} />}
                       >
                         <Meta title={nft.name} />
                       </Card>
-                    </List.Item>
-                  )}
+                    </List.Item>)
+                  }}
                 />
                 <div ref={sentryRef} />
               </>
