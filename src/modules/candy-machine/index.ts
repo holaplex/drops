@@ -5,6 +5,24 @@ import {
   TOKEN_PROGRAM_ID,
   Token,
 } from "@solana/spl-token";
+import { deserializeUnchecked } from 'borsh';
+import { map, range } from "ramda";
+
+const MAX_SYMBOL_LENGTH = 10;
+const MAX_CREATOR_LIMIT = 5;
+const MAX_NAME_LENGTH = 32;
+const MAX_URI_LENGTH = 200;
+const CONFIG_LINE_SIZE = 4 + MAX_NAME_LENGTH + 4 + MAX_URI_LENGTH;
+const MAX_CREATOR_LEN = 32 + 1 + 1;
+const CONFIG_ARRAY_START = 32 + // authority
+  4 + 6 + // uuid + u32 len
+  4 + MAX_SYMBOL_LENGTH + // u32 len + symbol
+  2 + // seller fee basis points
+  1 + 4 + MAX_CREATOR_LIMIT * MAX_CREATOR_LEN + // optional + u32 len + actual vec
+  8 + //max supply
+  1 + // is mutable
+  1 + // retain authority
+  4; // max number of lines
 
 export const CANDY_MACHINE_PROGRAM = new anchor.web3.PublicKey(
   "cndyAnrLdpjq1Ssp1z8xxDsB8dxe7u4HL5Nxi2K5WXZ"
@@ -17,6 +35,30 @@ const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID = new anchor.web3.PublicKey(
 const TOKEN_METADATA_PROGRAM_ID = new anchor.web3.PublicKey(
   "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
 );
+
+export class ConfigLine {
+  uri: string;
+  name: string;
+
+  constructor(args: { uri: string, name: string }) {
+    this.uri = args.uri.replace(/\0.*$/g,'')
+    this.name = args.name.replace(/\0.*$/g,'')
+  }
+
+}
+
+const CANDY_MACHINE_SCHEMA = new Map<any, any>([
+  [
+    ConfigLine,
+    {
+      kind: 'struct',
+      fields: [
+        ['name', 'string'],
+        ['uri', 'string']
+      ]
+    }
+  ]
+])
 
 export interface CandyMachine {
   id: anchor.web3.PublicKey,
@@ -31,6 +73,7 @@ interface CandyMachineState {
   itemsRemaining: number;
   goLiveDate: Date;
   price: number;
+  configLines: ConfigLine[];
 }
 
 export const awaitTransactionSignatureConfirmation = async (
@@ -185,10 +228,21 @@ export const getCandyMachineState = async (
   let goLiveDate = state.data.goLiveDate.toNumber();
   goLiveDate = new Date(goLiveDate * 1000);
 
-  // TODO: Extract config lines from the config account in order to find NFTs associated to the drop
   const config: any = await connection.getAccountInfo(configId)
 
-  console.log('Candy Maching Config', config)
+  const configLines = map(
+    (index) => {
+      const configLineBuffer = config.data.slice(
+        CONFIG_ARRAY_START + 4 + index * CONFIG_LINE_SIZE,
+        CONFIG_ARRAY_START + 4 + (index + 1) * CONFIG_LINE_SIZE,
+      )
+
+      const configLine = deserializeUnchecked(CANDY_MACHINE_SCHEMA, ConfigLine, configLineBuffer) as ConfigLine;
+
+      return configLine
+    },
+    range(0, itemsAvailable)
+  )
 
   return {
     price,
@@ -197,8 +251,18 @@ export const getCandyMachineState = async (
     itemsRedeemed,
     itemsRemaining,
     goLiveDate,
+    configLines,
   };
 }
+
+export const getNFTsFromConfigLines = async (configLines: ConfigLine[]) => await Promise.all(map(
+  async (configLine: ConfigLine) => {
+    const res = await fetch(configLine.uri)
+    const json = await res.json()
+
+    return json
+  }, configLines)
+)
 
 const getMasterEdition = async (
   mint: anchor.web3.PublicKey
