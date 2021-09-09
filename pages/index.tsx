@@ -236,7 +236,7 @@ const Drop = (props: DropProps) => {
                     <List.Item key={index}>
                       {/*@ts-ignore*/}
                       <Card
-                        cover={<img alt="example" src={view(lensPath(['files', 0, 'uri']))(nft)} />}
+                        cover={<img alt="example" src={nft.image} />}
                       >
                         <Meta title={nft.name} />
                       </Card>
