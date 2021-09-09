@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react"
 import styled from "styled-components"
-import dayjs from "dayjs"
-import relativeTime from "dayjs/plugin/relativeTime"
+import moment from "moment"
 import { Button, Row, Typography, Space, List, Modal, Spin, Card, Col } from "antd"
 import * as anchor from "@project-serum/anchor";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
-import { take, pipe, isEmpty, not, concat, drop, length, view, lensPath } from "ramda"
+import { take, pipe, isEmpty, not, concat, drop, length, view, lensPath, gt } from "ramda"
 import { LoadingOutlined } from '@ant-design/icons';
 import { useWallet } from "@solana/wallet-adapter-react"
+import pluralize from 'pluralize'
 import useInfiniteScroll from 'react-infinite-scroll-hook'
 
 import {
@@ -19,8 +19,6 @@ import {
   getNFTsFromConfigLines,
 } from "@/modules/candy-machine";
 import { WalletMultiButton, WalletModalProvider } from "@solana/wallet-adapter-ant-design";
-
-dayjs.extend(relativeTime)
 
 const { Meta } = Card
 const { Title, Paragraph, Text } = Typography
@@ -39,10 +37,10 @@ const Drop = (props: DropProps) => {
   const [balance, setBalance] = useState<number>();
   const [loadingNFTs, setLoadingNFTs] = useState(false);
   const [loadingCandyMachine, setLoadingCandyMachine] = useState(false)
-  const [isSoldOut, setIsSoldOut] = useState(false); // true when items remaining is zero
-  const [startDate, setStartDate] = useState<dayjs.Dayjs>(dayjs(props.startDate))
-  const [now, setNow] = useState<dayjs.Dayjs>(dayjs())
-  const [isMinting, setIsMinting] = useState(false); // true when user got to press MINT
+  const [isSoldOut, setIsSoldOut] = useState(false);
+  const [startDate, setStartDate] = useState<moment.Moment>(moment.unix(props.startDate))
+  const [now, setNow] = useState<moment.Moment>(moment())
+  const [isMinting, setIsMinting] = useState(false);
   const [itemsRemaining, setItemsRemaining] = useState<number>()
   const [price, setPrice] = useState<number>()
   const [configLines, setConfigLines] = useState<ConfigLine[]>([])
@@ -54,6 +52,8 @@ const Drop = (props: DropProps) => {
     message: "",
     severity: undefined,
   });
+
+  const duration = moment.duration(startDate.diff(now));
 
   const wallet = useWallet();
   const [candyMachine, setCandyMachine] = useState<CandyMachine>();
@@ -183,7 +183,7 @@ const Drop = (props: DropProps) => {
       setIsSoldOut(itemsRemaining === 0);
       setItemsRemaining(itemsRemaining)
       setItemsAvailable(itemsAvailable)
-      setStartDate(dayjs(goLiveDate))
+      setStartDate(moment(goLiveDate))
       setConfigLines(drop(length(nfts), configLines))
       setNFTs(nfts)
       setCandyMachine(candyMachine)
@@ -191,6 +191,14 @@ const Drop = (props: DropProps) => {
       setLoadingCandyMachine(false)
     })();
   }, [wallet, props.candyMachineId, props.connection]);
+
+  useEffect(() => {
+    const tickDuration = setInterval(() => { setNow(moment()) }, 1000)
+
+    return () => {
+      clearInterval(tickDuration)
+    }
+  }, [startDate])
 
   return (
     <Row justify="center">
@@ -205,38 +213,70 @@ const Drop = (props: DropProps) => {
         ) : now.isAfter(startDate) ? (
           <Space direction="vertical" size="small" align="center">
             <Title level={3}>Sale is live!</Title>
-            {wallet.connected ? (
-              loadingCandyMachine ? (
-                <Spin size="large" indicator={<LoadingOutlined />} />
-              ) : (
-                <>
-                  <Button onClick={onMint} type="primary" size="large" loading={isMinting}>
-                    Buy Now - {price} SOL
-                  </Button>
-                  <Text>{itemsRemaining}/{itemsAvailable} remaining</Text>
-                </>
-              )
+            {loadingCandyMachine ? (
+              <Spin size="large" indicator={<LoadingOutlined />} />
             ) : (
-              <WalletModalProvider>
-                <WalletMultiButton size="large">Connect Wallet</WalletMultiButton>
-              </WalletModalProvider>
+              <>
+                <Button onClick={onMint} type="primary" size="large" loading={isMinting}>
+                  Buy Now - {price} SOL
+                </Button>
+                <Text>{itemsRemaining}/{itemsAvailable} remaining</Text>
+              </>
             )}
           </Space>
         ) : (
-          startDate.toNow()
+          <Card>
+            <Space direction="horizontal" size="middle">
+              {gt(duration.years(), 0) && (
+                <Space direction="vertical" align="center">
+                  <Title level={3}>{duration.years()}</Title>
+                  <Text>{pluralize('years')}</Text>
+                </Space>
+              )}
+              {gt(duration.months(), 0) && (
+                <Space direction="vertical" align="center">
+                  <Title level={3}>{duration.months()}</Title>
+                  <Text>{pluralize('month')}</Text>
+                </Space>
+              )}
+              {gt(duration.days(), 0) && (
+                <Space direction="vertical" align="center">
+                  <Title level={3}>{duration.days()}</Title>
+                  <Text>{pluralize('day')}</Text>
+                </Space>
+              )}
+              <Space direction="vertical" align="center">
+                <Title level={3}>{duration.hours()}</Title>
+                <Text>{pluralize('hour')}</Text>
+              </Space>
+              <Space direction="vertical" align="center">
+                <Title level={3}>{duration.minutes()}</Title>
+                <Text>{pluralize('minute')}</Text>
+              </Space>
+              <Space direction="vertical" align="center">
+                <Title level={3}>{duration.seconds()}</Title>
+                <Text>{pluralize('second')}</Text>
+              </Space>
+            </Space>
+          </Card>
+        )}
+        {not(wallet?.connected) && (
+          <WalletModalProvider>
+            <WalletMultiButton size="large">Connect Wallet</WalletMultiButton>
+          </WalletModalProvider>
         )}
         <Row justify="center">
           <Col xs={24} sm={22} md={20}>
             {pipe(isEmpty, not)(nfts) && (
               <>
                 <List
-                  grid={{ xs: 1, sm: 2, md: 4, lg: 4, xl: 4, xxl: 4, gutter: 16 }}
+                  grid={{ xs: 1, sm: 3, md: 5, lg: 5, xl: 5, xxl: 5, gutter: 16 }}
                   dataSource={nfts}
                   renderItem={(nft: any, index: number) => (
                     <List.Item key={index}>
                       {/*@ts-ignore*/}
                       <Card
-                        cover={<img alt="example" src={nft.image} />}
+                        cover={<img alt={nft.name} src={nft.image} />}
                       >
                         <Meta title={nft.name} />
                       </Card>
@@ -265,7 +305,6 @@ const Drop = (props: DropProps) => {
               <Space direction="vertical" align="center">
                 <Title level={1}>Minting your Simple Shape</Title>
                 <Paragraph>Hold tight, a bunch of people are trying to do this right now. It could take a minute or two.</Paragraph>
-
                 <Spin size="large" indicator={<LoadingOutlined />} />
               </Space>
             </Row>
