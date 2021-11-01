@@ -1,4 +1,5 @@
 import * as anchor from "@project-serum/anchor";
+import { Idl } from "@project-serum/anchor";
 
 import {
   MintLayout,
@@ -210,7 +211,7 @@ export const getCandyMachineState = async (
   const idl = await anchor.Program.fetchIdl(
     CANDY_MACHINE_PROGRAM,
     provider
-  );
+  ) as Idl;
 
   const program = new anchor.Program(idl, CANDY_MACHINE_PROGRAM, provider);
   const candyMachine = {

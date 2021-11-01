@@ -195,8 +195,8 @@ const Drop = (props: DropProps) => {
   return (
     <Row justify="center">
       <Space align="center" direction="vertical">
-        <Title>Simple Shapes</Title>
-        <Paragraph>Simple Shapes is true to its name. You get a color, you get a shape, you go home.</Paragraph>
+        <Title>BWO Duck</Title>
+        <Paragraph>Every duck is a God, a Binod, according to the lore of the first decentralized, digital country on Earth- BWO. Possessing one gives the holder the right to use the title of Lord/Lady.</Paragraph>
         {isSoldOut ? (
           <>
             <Title level={2}>Sold out!</Title>
@@ -263,7 +263,7 @@ const Drop = (props: DropProps) => {
           ) : (
             <Row justify="center">
               <Space direction="vertical" align="center">
-                <Title level={1}>Minting your Simple Shape</Title>
+                <Title level={1}>Minting your BWO Duck</Title>
                 <Paragraph>Hold tight, a bunch of people are trying to do this right now. It could take a minute or two.</Paragraph>
 
                 <Spin size="large" indicator={<LoadingOutlined />} />

@@ -14,10 +14,11 @@ const withTM = require('next-transpile-modules')([
   '@solana/wallet-adapter-solong',
   '@solana/wallet-adapter-torus',
   '@solana/wallet-adapter-wallets',
+  '@solana/wallet-adapter-ant-design',
   '@project-serum/sol-wallet-adapter',
 ])
 
-module.exports = withAntdLess({
+module.exports = withTM(withAntdLess({
   reactStrictMode: true,
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
     if (!isServer) {
@@ -27,4 +28,4 @@ module.exports = withAntdLess({
     return config
   },  
   lessVarsFilePath: './ant-theme.less',
-})
+}))
