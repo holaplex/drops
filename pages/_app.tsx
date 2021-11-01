@@ -11,11 +11,11 @@ const { Header, Footer, Content } = Layout
 import * as anchor from "@project-serum/anchor"
 import { ConnectionProvider } from "@solana/wallet-adapter-react"
 
-const treasury = new anchor.web3.PublicKey("H2jWAoW4bqeCByo2oepV5Rmqkc6rAaeWVp5TKU47BVHT")
+const treasury = new anchor.web3.PublicKey("EGdr1dBAj6HR9Pswy4RvoxPwC2HYZGycXtEE65bq72ai")
 
-const config = new anchor.web3.PublicKey("Vu68X5EuVvAWTmNQgYjK41JNC1mzoM32XYy3sAEXXMt")
+const config = new anchor.web3.PublicKey("6xTw6dBtvY9YdwA9DVN4xsbU4vFkR1m64caYrAod3A9h")
 
-const candyMachineId = new anchor.web3.PublicKey("5bVYkxwVy1po1sAq4JPwAdz27PEC7XRJKWzHS5VjBfZ8")
+const candyMachineId = new anchor.web3.PublicKey("S53GpXdZ86aFb3MGHvtTshdiNRfsFbiKNp6RRG5wuUE")
 
 const rpcHost = "https://explorer-api.devnet.solana.com/"
 const connection = new anchor.web3.Connection(rpcHost)
