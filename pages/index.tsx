@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import styled from "styled-components"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
 import { Button, Row, Typography, Space, List, Modal, Spin, Card, Col } from "antd"
@@ -7,6 +6,7 @@ import * as anchor from "@project-serum/anchor";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { take, pipe, isEmpty, not, concat, drop, length, view, lensPath } from "ramda"
 import { LoadingOutlined } from '@ant-design/icons';
+import Image from 'next/image'
 import { useWallet } from "@solana/wallet-adapter-react"
 import useInfiniteScroll from 'react-infinite-scroll-hook'
 
@@ -195,8 +195,8 @@ const Drop = (props: DropProps) => {
   return (
     <Row justify="center">
       <Space align="center" direction="vertical">
-        <Title>BWO Duck</Title>
-        <Paragraph>Every duck is a God, a Binod, according to the lore of the first decentralized, digital country on Earth- BWO. Possessing one gives the holder the right to use the title of Lord/Lady.</Paragraph>
+        <Image src="/header.png" width={895} height={398} />
+        <Title>BWO Duck Stealth Launch</Title>
         {isSoldOut ? (
           <>
             <Title level={2}>Sold out!</Title>

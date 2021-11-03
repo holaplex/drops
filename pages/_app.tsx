@@ -1,7 +1,6 @@
 
 import type { AppProps } from 'next/app'
 import React, { useMemo } from 'react';
-import 'antd/dist/antd.css'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import dynamic from 'next/dynamic'
@@ -10,6 +9,7 @@ import { clusterApiUrl } from '@solana/web3.js'
 const { Header, Footer, Content } = Layout
 import * as anchor from "@project-serum/anchor"
 import { ConnectionProvider } from "@solana/wallet-adapter-react"
+import '../styles/globals.css'
 
 const treasury = new anchor.web3.PublicKey("EGdr1dBAj6HR9Pswy4RvoxPwC2HYZGycXtEE65bq72ai")
 
