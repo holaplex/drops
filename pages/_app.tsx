@@ -13,7 +13,7 @@ import '../styles/globals.css'
 
 const treasury = new anchor.web3.PublicKey("EGdr1dBAj6HR9Pswy4RvoxPwC2HYZGycXtEE65bq72ai")
 
-const config = new anchor.web3.PublicKey("GYH4cUHSpyXKd79w79r1fCULQBxK2HVqbG9k3STf9KDR")
+const config = new anchor.web3.PublicKey("GqNkzyWXsdA1zE82ZtaKncZpWfie7DgiGwX134JfHnq6")
 
 const candyMachineId = new anchor.web3.PublicKey("GYH4cUHSpyXKd79w79r1fCULQBxK2HVqbG9k3STf9KDR")
 
