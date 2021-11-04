@@ -13,11 +13,11 @@ import '../styles/globals.css'
 
 const treasury = new anchor.web3.PublicKey("EGdr1dBAj6HR9Pswy4RvoxPwC2HYZGycXtEE65bq72ai")
 
-const config = new anchor.web3.PublicKey("6xTw6dBtvY9YdwA9DVN4xsbU4vFkR1m64caYrAod3A9h")
+const config = new anchor.web3.PublicKey("GYH4cUHSpyXKd79w79r1fCULQBxK2HVqbG9k3STf9KDR")
 
-const candyMachineId = new anchor.web3.PublicKey("S53GpXdZ86aFb3MGHvtTshdiNRfsFbiKNp6RRG5wuUE")
+const candyMachineId = new anchor.web3.PublicKey("GYH4cUHSpyXKd79w79r1fCULQBxK2HVqbG9k3STf9KDR")
 
-const rpcHost = "https://explorer-api.devnet.solana.com/"
+const rpcHost = "https://holaplex.rpcpool.com/"
 const connection = new anchor.web3.Connection(rpcHost)
 
 const startDateSeed = parseInt("996649200", 10)
@@ -31,7 +31,7 @@ const WalletProvider = dynamic(() => import('@/modules/wallet/provider'), {
 })
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const network = WalletAdapterNetwork.Devnet;
+  const network = WalletAdapterNetwork.Mainnet;
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 
   return (
